@@ -3,25 +3,27 @@
     <div class="container">
       <h1>{{ title }}</h1>
       <p>{{ description }}</p>
-      
+
       <!-- HelloWorld组件示例 -->
       <HelloWorld message="Vue3 + Vite 开发环境">
         <p>这是通过插槽传递的内容</p>
       </HelloWorld>
-      
+
       <div class="counter-section">
         <p>计数器: {{ count }}</p>
         <button @click="increment" class="btn">增加</button>
         <button @click="decrement" class="btn">减少</button>
         <button @click="reset" class="btn btn-secondary">重置</button>
       </div>
+
       <div class="input-section">
-        <input 
-          v-model="message" 
-          placeholder="输入消息..."
-          class="input-field"
-        />
+        <input v-model="message" placeholder="输入消息..." class="input-field" />
         <p v-if="message">你输入的是: {{ message }}</p>
+      </div>
+
+      <!-- API示例组件 -->
+      <div class="api-section">
+        <ApiDemo />
       </div>
     </div>
   </div>
@@ -30,11 +32,13 @@
 <script>
 import { ref } from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
+import ApiDemo from './components/ApiDemo.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    ApiDemo
   },
   setup() {
     const title = ref('Agent Front - Vue3')
@@ -85,7 +89,7 @@ export default {
   background: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -154,5 +158,13 @@ p {
 .input-field:focus {
   outline: none;
   border-color: #42b883;
+}
+
+.api-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 8px;
+  border: 1px solid #e0e6ed;
 }
 </style>
