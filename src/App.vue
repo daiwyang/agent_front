@@ -1,73 +1,36 @@
 <template>
   <div id="app">
-    <div class="container">
-      <h1>{{ title }}</h1>
-      <p>{{ description }}</p>
-
-      <!-- HelloWorld组件示例 -->
-      <HelloWorld message="Vue3 + Vite 开发环境">
-        <p>这是通过插槽传递的内容</p>
-      </HelloWorld>
-
-      <div class="counter-section">
-        <p>计数器: {{ count }}</p>
-        <button @click="increment" class="btn">增加</button>
-        <button @click="decrement" class="btn">减少</button>
-        <button @click="reset" class="btn btn-secondary">重置</button>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <router-link to="/" class="nav-logo">
+          Agent Front
+        </router-link>
+        <div class="nav-menu">
+          <router-link to="/" class="nav-link">首页</router-link>
+          <router-link to="/api-demo" class="nav-link">API演示</router-link>
+          <router-link to="/about" class="nav-link">关于</router-link>
+        </div>
       </div>
+    </nav>
 
-      <div class="input-section">
-        <input v-model="message" placeholder="输入消息..." class="input-field" />
-        <p v-if="message">你输入的是: {{ message }}</p>
-      </div>
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+      <router-view />
+    </main>
 
-      <!-- API示例组件 -->
-      <div class="api-section">
-        <ApiDemo />
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p>&copy; 2025 Agent Front. 基于 Vue3 + Vue Router 构建</p>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
-import ApiDemo from './components/ApiDemo.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld,
-    ApiDemo
-  },
-  setup() {
-    const title = ref('Agent Front - Vue3')
-    const description = ref('欢迎使用 Vue3 驱动的 Agent Front 前端项目')
-    const count = ref(0)
-    const message = ref('')
-
-    const increment = () => {
-      count.value++
-    }
-
-    const decrement = () => {
-      count.value--
-    }
-
-    const reset = () => {
-      count.value = 0
-    }
-
-    return {
-      title,
-      description,
-      count,
-      message,
-      increment,
-      decrement,
-      reset
-    }
-  }
+  name: 'App'
 }
 </script>
 
@@ -78,93 +41,128 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: 0;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  color: #42b883;
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2.5em;
-}
-
-p {
-  text-align: center;
-  font-size: 1.2em;
-  color: #666;
-  margin-bottom: 30px;
-}
-
-.counter-section {
-  text-align: center;
-  margin: 30px 0;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.input-section {
-  text-align: center;
-  margin: 30px 0;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.btn {
-  background: #42b883;
+/* 导航栏样式 */
+.navbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.btn:hover {
-  background: #369870;
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
 }
 
-.btn-secondary {
-  background: #6c757d;
+.nav-logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
 }
 
-.btn-secondary:hover {
-  background: #545b62;
+.nav-logo:hover {
+  opacity: 0.8;
 }
 
-.input-field {
-  padding: 10px;
-  font-size: 16px;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  width: 300px;
-  max-width: 100%;
+.nav-menu {
+  display: flex;
+  gap: 30px;
 }
 
-.input-field:focus {
-  outline: none;
-  border-color: #42b883;
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-.api-section {
-  margin-top: 30px;
-  padding: 20px;
-  background: #f0f8ff;
-  border-radius: 8px;
-  border: 1px solid #e0e6ed;
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-link.router-link-active {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 主内容区域 */
+.main-content {
+  flex: 1;
+  padding: 20px 0;
+  min-height: calc(100vh - 120px);
+}
+
+/* 页脚样式 */
+.footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9em;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    height: auto;
+    padding: 15px 20px;
+  }
+  
+  .nav-menu {
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .nav-link {
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
+  
+  .main-content {
+    min-height: calc(100vh - 140px);
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .nav-logo {
+    font-size: 1.3em;
+  }
 }
 </style>
