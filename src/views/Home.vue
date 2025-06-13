@@ -68,6 +68,10 @@
           <h4>📡 API演示</h4>
           <p>查看各种API请求示例</p>
         </router-link>
+        <router-link to="/upload-demo" class="nav-card">
+          <h4>📁 文件上传</h4>
+          <p>体验文件上传功能</p>
+        </router-link>
         <router-link to="/about" class="nav-card">
           <h4>ℹ️ 关于项目</h4>
           <p>了解项目详细信息</p>

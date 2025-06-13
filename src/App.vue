@@ -9,6 +9,7 @@
         <div class="nav-menu">
           <router-link to="/" class="nav-link">首页</router-link>
           <router-link to="/api-demo" class="nav-link">API演示</router-link>
+          <router-link to="/upload-demo" class="nav-link">文件上传</router-link>
           <router-link to="/about" class="nav-link">关于</router-link>
         </div>
 

@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import ApiDemo from '../views/ApiDemo.vue';
 import About from '../views/About.vue';
+import UploadDemo from '../views/UploadDemo.vue';
 
 const routes = [
   {
@@ -23,6 +24,12 @@ const routes = [
     name: 'About',
     component: About,
     meta: { title: '关于我们' },
+  },
+  {
+    path: '/upload-demo',
+    name: 'UploadDemo',
+    component: UploadDemo,
+    meta: { title: '文件上传演示' },
   },
   // 404 页面重定向
   {
