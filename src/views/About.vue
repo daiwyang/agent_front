@@ -39,6 +39,13 @@
             </div>
           </div>
           <div class="tech-item">
+            <span class="tech-icon">🍍</span>
+            <div>
+              <strong>Pinia</strong>
+              <p>Vue3官方状态管理库</p>
+            </div>
+          </div>
+          <div class="tech-item">
             <span class="tech-icon">📡</span>
             <div>
               <strong>Axios</strong>
@@ -53,8 +60,11 @@
         <ul class="feature-list">
           <li>响应式组件设计</li>
           <li>路由导航管理</li>
+          <li>Pinia状态管理</li>
           <li>API请求封装</li>
           <li>现代化UI界面</li>
+          <li>主题切换功能</li>
+          <li>用户认证系统</li>
           <li>移动端适配</li>
           <li>热重载开发体验</li>
         </ul>
@@ -80,6 +90,11 @@
             <div class="stat-label">已知Bug</div>
           </div>
         </div>
+      </div>
+
+      <div class="content-card full-width">
+        <h2>🍍 Pinia 状态管理演示</h2>
+        <PiniaDemo />
       </div>
 
       <div class="content-card full-width">
@@ -113,8 +128,13 @@
 </template>
 
 <script>
+import PiniaDemo from '../components/PiniaDemo.vue'
+
 export default {
-  name: 'About'
+  name: 'About',
+  components: {
+    PiniaDemo
+  }
 }
 </script>
 

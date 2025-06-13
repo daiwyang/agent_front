@@ -15,12 +15,37 @@
     <div class="features-grid">
       <div class="feature-card">
         <div class="counter-section">
-          <h3>计数器演示</h3>
-          <p>计数器: {{ count }}</p>
+          <h3>Pinia计数器演示</h3>
+          <p>计数器: {{ counterStore.count }}</p>
+          <p v-if="counterStore.doubleCount">双倍值: {{ counterStore.doubleCount }}</p>
+          <p class="counter-status">
+            状态: {{ counterStore.isEven ? '偶数' : '奇数' }} 
+            {{ counterStore.isPositive ? ' | 正数' : counterStore.isNegative ? ' | 负数' : ' | 零' }}
+          </p>
           <div class="button-group">
-            <button @click="increment" class="btn">增加</button>
-            <button @click="decrement" class="btn">减少</button>
-            <button @click="reset" class="btn btn-secondary">重置</button>
+            <button @click="counterStore.increment()" class="btn">+1</button>
+            <button @click="counterStore.increment(5)" class="btn">+5</button>
+            <button @click="counterStore.decrement()" class="btn">-1</button>
+            <button @click="counterStore.reset()" class="btn btn-secondary">重置</button>
+          </div>
+          <div class="button-group" style="margin-top: 10px;">
+            <button @click="counterStore.multiply(2)" class="btn btn-small">×2</button>
+            <button @click="counterStore.random(1, 100)" class="btn btn-small">随机</button>
+            <button @click="counterStore.undo()" class="btn btn-small" :disabled="counterStore.historySize === 0">撤销</button>
+          </div>
+          
+          <!-- 操作历史 -->
+          <div v-if="counterStore.historySize > 0" class="history-section">
+            <h4>操作历史 ({{ counterStore.historySize }})</h4>
+            <div class="history-list">
+              <div v-for="item in counterStore.history.slice(0, 3)" :key="item.id" class="history-item">
+                <span class="history-action">{{ item.action }}</span>
+                <span class="history-change">{{ item.oldValue }} → {{ item.newValue }}</span>
+              </div>
+              <button v-if="counterStore.historySize > 3" @click="showAllHistory = !showAllHistory" class="btn btn-small">
+                {{ showAllHistory ? '收起' : `查看全部 ${counterStore.historySize} 条` }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -53,6 +78,8 @@
 <script>
 import { ref } from 'vue'
 import HelloWorld from '../components/HelloWorld.vue'
+import { useCounterStore } from '../stores/counter.js'
+import { useUserStore } from '../stores/user.js'
 
 export default {
   name: 'Home',
@@ -61,30 +88,21 @@ export default {
   },
   setup() {
     const title = ref('Agent Front - Vue3')
-    const description = ref('欢迎使用 Vue3 + Vue Router 驱动的前端项目')
-    const count = ref(0)
+    const description = ref('欢迎使用 Vue3 + Vue Router + Pinia 驱动的前端项目')
     const message = ref('')
-
-    const increment = () => {
-      count.value++
-    }
-
-    const decrement = () => {
-      count.value--
-    }
-
-    const reset = () => {
-      count.value = 0
-    }
-
+    const showAllHistory = ref(false)
+    
+    // 使用Pinia stores
+    const counterStore = useCounterStore()
+    const userStore = useUserStore()
+    
     return {
       title,
       description,
-      count,
       message,
-      increment,
-      decrement,
-      reset
+      showAllHistory,
+      counterStore,
+      userStore
     }
   }
 }
@@ -130,11 +148,12 @@ export default {
 }
 
 .feature-card {
-  background: white;
+  background: var(--bg-secondary);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .feature-card:hover {
@@ -143,7 +162,7 @@ export default {
 }
 
 .feature-card h3 {
-  color: #42b883;
+  color: var(--accent-color);
   margin-bottom: 20px;
   text-align: center;
 }
@@ -154,7 +173,7 @@ export default {
 
 .counter-section p {
   font-size: 1.5em;
-  color: #333;
+  color: var(--text-primary);
   margin: 20px 0;
 }
 
@@ -172,8 +191,10 @@ export default {
 .input-field {
   padding: 12px;
   font-size: 16px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   width: 100%;
   max-width: 300px;
   margin-bottom: 15px;
@@ -182,21 +203,21 @@ export default {
 
 .input-field:focus {
   outline: none;
-  border-color: #42b883;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(66, 184, 131, 0.1);
 }
 
 .message-display {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
   padding: 10px;
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
   border-radius: 6px;
-  border-left: 4px solid #42b883;
+  border-left: 4px solid var(--accent-color);
 }
 
 .btn {
-  background: #42b883;
+  background: var(--accent-color);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -208,7 +229,7 @@ export default {
 }
 
 .btn:hover {
-  background: #369870;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -220,13 +241,68 @@ export default {
   background: #545b62;
 }
 
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.counter-status {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin: 10px 0;
+}
+
+.history-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+.history-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 1em;
+  color: var(--text-secondary);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.history-action {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.history-change {
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
 .navigation-section {
   margin-top: 60px;
   text-align: center;
 }
 
 .navigation-section h3 {
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 30px;
   font-size: 1.8em;
 }
@@ -241,28 +317,28 @@ export default {
 .nav-card {
   display: block;
   text-decoration: none;
-  background: white;
+  background: var(--bg-secondary);
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow);
   transition: all 0.3s ease;
   border: 2px solid transparent;
 }
 
 .nav-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: #42b883;
+  box-shadow: 0 8px 25px var(--shadow);
+  border-color: var(--accent-color);
 }
 
 .nav-card h4 {
-  color: #42b883;
+  color: var(--accent-color);
   margin-bottom: 10px;
   font-size: 1.3em;
 }
 
 .nav-card p {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
