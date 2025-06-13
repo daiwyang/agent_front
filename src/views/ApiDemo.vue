@@ -8,7 +8,7 @@
     <div class="demo-container">
       <!-- 原有的API演示组件 -->
       <ApiDemo />
-      
+
       <!-- 额外的API信息卡片 -->
       <div class="info-cards">
         <div class="info-card">
@@ -20,7 +20,7 @@
             <li>DELETE - 删除数据</li>
           </ul>
         </div>
-        
+
         <div class="info-card">
           <h3>📋 功能特性</h3>
           <ul>
@@ -30,7 +30,7 @@
             <li>超时设置</li>
           </ul>
         </div>
-        
+
         <div class="info-card">
           <h3>🚀 快速开始</h3>
           <p>点击上方按钮体验各种API请求，查看返回的数据格式和状态。</p>
@@ -176,7 +176,7 @@ export default {
   .page-header h1 {
     font-size: 2em;
   }
-  
+
   .info-cards {
     grid-template-columns: 1fr;
   }

@@ -11,7 +11,7 @@
           <router-link to="/api-demo" class="nav-link">API演示</router-link>
           <router-link to="/about" class="nav-link">关于</router-link>
         </div>
-        
+
         <!-- 用户信息和设置 -->
         <div class="nav-actions">
           <!-- 主题切换按钮 -->
@@ -19,7 +19,7 @@
             <span v-if="settingsStore.theme === 'light'">🌙</span>
             <span v-else>☀️</span>
           </button>
-          
+
           <!-- 用户区域 -->
           <div class="user-area">
             <div v-if="userStore.isLoggedIn" class="user-info">
@@ -54,49 +54,31 @@
           <h3>{{ isRegisterMode ? '注册' : '登录' }}</h3>
           <button @click="closeModal" class="close-btn">&times;</button>
         </div>
-        
+
         <form @submit.prevent="handleAuth" class="auth-form">
           <div v-if="isRegisterMode" class="form-group">
             <label for="name">姓名</label>
-            <input 
-              id="name"
-              v-model="authForm.name" 
-              type="text" 
-              placeholder="请输入姓名"
-              required
-            >
+            <input id="name" v-model="authForm.name" type="text" placeholder="请输入姓名" required>
           </div>
-          
+
           <div class="form-group">
             <label for="email">邮箱</label>
-            <input 
-              id="email"
-              v-model="authForm.username" 
-              type="email" 
-              placeholder="请输入邮箱"
-              required
-            >
+            <input id="email" v-model="authForm.username" type="email" placeholder="请输入邮箱" required>
           </div>
-          
+
           <div class="form-group">
             <label for="password">密码</label>
-            <input 
-              id="password"
-              v-model="authForm.password" 
-              type="password" 
-              placeholder="请输入密码"
-              required
-            >
+            <input id="password" v-model="authForm.password" type="password" placeholder="请输入密码" required>
           </div>
-          
+
           <div v-if="userStore.error" class="error-message">
             {{ userStore.error }}
           </div>
-          
+
           <button type="submit" :disabled="userStore.loading" class="auth-submit-btn">
             {{ userStore.loading ? '处理中...' : (isRegisterMode ? '注册' : '登录') }}
           </button>
-          
+
           <div class="auth-switch">
             <span v-if="!isRegisterMode">
               还没有账号？
@@ -127,18 +109,18 @@ export default {
   setup() {
     const userStore = useUserStore()
     const settingsStore = useSettingsStore()
-    
+
     // 模态框状态
     const showLoginModal = ref(false)
     const isRegisterMode = ref(false)
-    
+
     // 表单数据
     const authForm = ref({
       name: '',
       username: '',
       password: ''
     })
-    
+
     // 处理认证（登录/注册）
     const handleAuth = async () => {
       try {
@@ -154,7 +136,7 @@ export default {
             password: authForm.value.password
           })
         }
-        
+
         // 成功后关闭模态框
         closeModal()
       } catch (error) {
@@ -162,18 +144,18 @@ export default {
         console.error('Auth error:', error)
       }
     }
-    
+
     // 登出
     const handleLogout = () => {
       userStore.logout()
     }
-    
+
     // 关闭模态框
     const closeModal = () => {
       showLoginModal.value = false
       isRegisterMode.value = false
       userStore.clearError()
-      
+
       // 重置表单
       authForm.value = {
         name: '',
@@ -181,7 +163,7 @@ export default {
         password: ''
       }
     }
-    
+
     return {
       userStore,
       settingsStore,
@@ -317,7 +299,8 @@ export default {
   font-weight: 500;
 }
 
-.login-btn, .logout-btn {
+.login-btn,
+.logout-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
@@ -328,7 +311,8 @@ export default {
   font-size: 0.9em;
 }
 
-.login-btn:hover, .logout-btn:hover {
+.login-btn:hover,
+.logout-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
@@ -507,8 +491,13 @@ export default {
 
 /* 动画 */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -516,6 +505,7 @@ export default {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -529,25 +519,25 @@ export default {
     height: auto;
     padding: 15px 20px;
   }
-  
+
   .nav-menu {
     gap: 15px;
     margin: 10px 0;
   }
-  
+
   .nav-actions {
     margin-top: 10px;
   }
-  
+
   .nav-link {
     padding: 6px 12px;
     font-size: 0.9em;
   }
-  
+
   .main-content {
     min-height: calc(100vh - 160px);
   }
-  
+
   .user-name {
     display: none;
   }
@@ -558,11 +548,11 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .nav-logo {
     font-size: 1.3em;
   }
-  
+
   .modal-content {
     width: 95%;
   }

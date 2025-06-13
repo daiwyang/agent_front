@@ -352,15 +352,15 @@ export default {
   .page-header h1 {
     font-size: 2em;
   }
-  
+
   .content-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .command-item {
     flex-direction: column;
     gap: 10px;

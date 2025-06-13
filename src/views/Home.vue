@@ -19,7 +19,7 @@
           <p>计数器: {{ counterStore.count }}</p>
           <p v-if="counterStore.doubleCount">双倍值: {{ counterStore.doubleCount }}</p>
           <p class="counter-status">
-            状态: {{ counterStore.isEven ? '偶数' : '奇数' }} 
+            状态: {{ counterStore.isEven ? '偶数' : '奇数' }}
             {{ counterStore.isPositive ? ' | 正数' : counterStore.isNegative ? ' | 负数' : ' | 零' }}
           </p>
           <div class="button-group">
@@ -31,9 +31,10 @@
           <div class="button-group" style="margin-top: 10px;">
             <button @click="counterStore.multiply(2)" class="btn btn-small">×2</button>
             <button @click="counterStore.random(1, 100)" class="btn btn-small">随机</button>
-            <button @click="counterStore.undo()" class="btn btn-small" :disabled="counterStore.historySize === 0">撤销</button>
+            <button @click="counterStore.undo()" class="btn btn-small"
+              :disabled="counterStore.historySize === 0">撤销</button>
           </div>
-          
+
           <!-- 操作历史 -->
           <div v-if="counterStore.historySize > 0" class="history-section">
             <h4>操作历史 ({{ counterStore.historySize }})</h4>
@@ -42,7 +43,8 @@
                 <span class="history-action">{{ item.action }}</span>
                 <span class="history-change">{{ item.oldValue }} → {{ item.newValue }}</span>
               </div>
-              <button v-if="counterStore.historySize > 3" @click="showAllHistory = !showAllHistory" class="btn btn-small">
+              <button v-if="counterStore.historySize > 3" @click="showAllHistory = !showAllHistory"
+                class="btn btn-small">
                 {{ showAllHistory ? '收起' : `查看全部 ${counterStore.historySize} 条` }}
               </button>
             </div>
@@ -91,11 +93,11 @@ export default {
     const description = ref('欢迎使用 Vue3 + Vue Router + Pinia 驱动的前端项目')
     const message = ref('')
     const showAllHistory = ref(false)
-    
+
     // 使用Pinia stores
     const counterStore = useCounterStore()
     const userStore = useUserStore()
-    
+
     return {
       title,
       description,
@@ -347,16 +349,16 @@ export default {
   .hero-section h1 {
     font-size: 2em;
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .button-group {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn {
     width: 120px;
   }
