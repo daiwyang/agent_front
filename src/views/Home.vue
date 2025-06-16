@@ -12,70 +12,25 @@
       </HelloWorld>
     </div>
 
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="counter-section">
-          <h3>Pinia计数器演示</h3>
-          <p>计数器: {{ counterStore.count }}</p>
-          <p v-if="counterStore.doubleCount">双倍值: {{ counterStore.doubleCount }}</p>
-          <p class="counter-status">
-            状态: {{ counterStore.isEven ? '偶数' : '奇数' }}
-            {{ counterStore.isPositive ? ' | 正数' : counterStore.isNegative ? ' | 负数' : ' | 零' }}
-          </p>
-          <div class="button-group">
-            <button @click="counterStore.increment()" class="btn">+1</button>
-            <button @click="counterStore.increment(5)" class="btn">+5</button>
-            <button @click="counterStore.decrement()" class="btn">-1</button>
-            <button @click="counterStore.reset()" class="btn btn-secondary">重置</button>
-          </div>
-          <div class="button-group" style="margin-top: 10px;">
-            <button @click="counterStore.multiply(2)" class="btn btn-small">×2</button>
-            <button @click="counterStore.random(1, 100)" class="btn btn-small">随机</button>
-            <button @click="counterStore.undo()" class="btn btn-small"
-              :disabled="counterStore.historySize === 0">撤销</button>
-          </div>
-
-          <!-- 操作历史 -->
-          <div v-if="counterStore.historySize > 0" class="history-section">
-            <h4>操作历史 ({{ counterStore.historySize }})</h4>
-            <div class="history-list">
-              <div v-for="item in counterStore.history.slice(0, 3)" :key="item.id" class="history-item">
-                <span class="history-action">{{ item.action }}</span>
-                <span class="history-change">{{ item.oldValue }} → {{ item.newValue }}</span>
-              </div>
-              <button v-if="counterStore.historySize > 3" @click="showAllHistory = !showAllHistory"
-                class="btn btn-small">
-                {{ showAllHistory ? '收起' : `查看全部 ${counterStore.historySize} 条` }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="input-section">
-          <h3>响应式输入</h3>
-          <input v-model="message" placeholder="输入消息..." class="input-field" />
-          <p v-if="message" class="message-display">你输入的是: {{ message }}</p>
-        </div>
+    <div class="navigation-section">
+      <h3>功能导航</h3>
+      <div class="nav-cards">
+        <router-link v-if="!userStore.isLoggedIn" to="/login" class="nav-card">
+          <h4>🔐 用户登录</h4>
+          <p>登录或注册新账户</p>
+        </router-link>
       </div>
     </div>
 
-    <div class="navigation-section">
-      <h3>探索更多功能</h3>
-      <div class="nav-cards">
-        <router-link to="/api-demo" class="nav-card">
-          <h4>📡 API演示</h4>
-          <p>查看各种API请求示例</p>
-        </router-link>
-        <router-link to="/upload-demo" class="nav-card">
-          <h4>📁 文件上传</h4>
-          <p>体验文件上传功能</p>
-        </router-link>
-        <router-link to="/about" class="nav-card">
-          <h4>ℹ️ 关于项目</h4>
-          <p>了解项目详细信息</p>
-        </router-link>
+    <!-- 用户状态区域 -->
+    <div v-if="userStore.isLoggedIn" class="user-status-section">
+      <div class="user-welcome">
+        <h3>欢迎回来，{{ userStore.displayName }}！</h3>
+        <p>您已成功登录系统</p>
+        <div class="user-actions">
+          <button @click="testAuthAPI" class="btn btn-primary">测试认证API</button>
+          <button @click="userStore.logout" class="btn btn-secondary">退出登录</button>
+        </div>
       </div>
     </div>
   </div>
@@ -84,7 +39,6 @@
 <script>
 import { ref } from 'vue'
 import HelloWorld from '../components/HelloWorld.vue'
-import { useCounterStore } from '../stores/counter.js'
 import { useUserStore } from '../stores/user.js'
 
 export default {
@@ -95,20 +49,38 @@ export default {
   setup() {
     const title = ref('Agent Front - Vue3')
     const description = ref('欢迎使用 Vue3 + Vue Router + Pinia 驱动的前端项目')
-    const message = ref('')
-    const showAllHistory = ref(false)
 
     // 使用Pinia stores
-    const counterStore = useCounterStore()
     const userStore = useUserStore()
+
+    // 测试认证API的方法
+    const testAuthAPI = async () => {
+      try {
+        // 这里调用一个需要认证的API
+        const response = await fetch('http://127.0.0.1:8000/user/info', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.status === 401) {
+          throw new Error('Token已过期或无效');
+        }
+        
+        const data = await response.json();
+        alert('API调用成功！用户信息: ' + JSON.stringify(data, null, 2));
+      } catch (error) {
+        console.error('API调用失败:', error);
+        alert('API调用失败: ' + error.message);
+      }
+    };
 
     return {
       title,
       description,
-      message,
-      showAllHistory,
-      counterStore,
-      userStore
+      userStore,
+      testAuthAPI
     }
   }
 }
@@ -143,168 +115,17 @@ export default {
 }
 
 .demo-section {
-  margin: 40px 0;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin: 40px 0;
-}
-
-.feature-card {
-  background: var(--bg-secondary);
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid var(--border-color);
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.feature-card h3 {
-  color: var(--accent-color);
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.counter-section {
-  text-align: center;
-}
-
-.counter-section p {
-  font-size: 1.5em;
-  color: var(--text-primary);
-  margin: 20px 0;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.input-section {
-  text-align: center;
-}
-
-.input-field {
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 15px;
-  transition: border-color 0.3s ease;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(66, 184, 131, 0.1);
-}
-
-.message-display {
-  color: var(--text-primary);
-  font-weight: 500;
-  padding: 10px;
-  background: var(--bg-tertiary);
-  border-radius: 6px;
-  border-left: 4px solid var(--accent-color);
-}
-
-.btn {
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.btn:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: #6c757d;
-}
-
-.btn-secondary:hover {
-  background: #545b62;
-}
-
-.btn-small {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.counter-status {
-  font-size: 0.9em;
-  color: var(--text-secondary);
-  margin: 10px 0;
-}
-
-.history-section {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color);
-}
-
-.history-section h4 {
-  margin: 0 0 10px 0;
-  font-size: 1em;
-  color: var(--text-secondary);
-}
-
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 10px;
-  background: var(--bg-tertiary);
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-
-.history-action {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.history-change {
-  color: var(--text-secondary);
-  font-family: monospace;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
 .navigation-section {
   margin-top: 60px;
   text-align: center;
+  max-width: 800px;
+  margin: 60px auto 0 auto;
+  padding: 0 20px;
 }
 
 .navigation-section h3 {
@@ -347,6 +168,73 @@ export default {
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
+}
+
+/* 用户状态区域样式 */
+.user-status-section {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.user-welcome {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.user-welcome h3 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.user-welcome p {
+  margin: 0 0 24px 0;
+  opacity: 0.9;
+  font-size: 16px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.user-actions .btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.user-actions .btn-primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-actions .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.user-actions .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {

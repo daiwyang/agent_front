@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useUserStore } from '../stores/user.js';
 
 // 导入页面组件
 import Home from '../views/Home.vue';
-import ApiDemo from '../views/ApiDemo.vue';
-import About from '../views/About.vue';
-import UploadDemo from '../views/UploadDemo.vue';
+import Login from '../views/Login.vue';
 
 const routes = [
   {
@@ -14,22 +13,10 @@ const routes = [
     meta: { title: '首页' },
   },
   {
-    path: '/api-demo',
-    name: 'ApiDemo',
-    component: ApiDemo,
-    meta: { title: 'API演示' },
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: About,
-    meta: { title: '关于我们' },
-  },
-  {
-    path: '/upload-demo',
-    name: 'UploadDemo',
-    component: UploadDemo,
-    meta: { title: '文件上传演示' },
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { title: '用户登录' },
   },
   // 404 页面重定向
   {
@@ -56,6 +43,17 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} - Agent Front`;
   }
+  
+  // 检查路由是否需要登录
+  if (to.meta.requiresAuth) {
+    const userStore = useUserStore();
+    if (!userStore.isLoggedIn) {
+      // 未登录，重定向到登录页面
+      next('/login');
+      return;
+    }
+  }
+  
   next();
 });
 

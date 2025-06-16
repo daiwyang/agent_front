@@ -8,9 +8,6 @@
         </router-link>
         <div class="nav-menu">
           <router-link to="/" class="nav-link">首页</router-link>
-          <router-link to="/api-demo" class="nav-link">API演示</router-link>
-          <router-link to="/upload-demo" class="nav-link">文件上传</router-link>
-          <router-link to="/about" class="nav-link">关于</router-link>
         </div>
 
         <!-- 用户信息和设置 -->
@@ -25,12 +22,19 @@
           <div class="user-area">
             <div v-if="userStore.isLoggedIn" class="user-info">
               <img :src="userStore.userAvatar" :alt="userStore.displayName" class="user-avatar">
-              <span class="user-name">{{ userStore.displayName }}</span>
-              <button @click="handleLogout" class="logout-btn">退出</button>
+              <div class="user-dropdown">
+                <span class="user-name">{{ userStore.displayName }}</span>
+                <div class="user-menu">
+                  <button @click="handleLogout" class="menu-item logout-item">退出登录</button>
+                </div>
+              </div>
             </div>
-            <button v-else @click="showLoginModal = true" class="login-btn">
-              登录
-            </button>
+            <div v-else class="login-actions">
+              <router-link to="/login" class="login-link">登录/注册</router-link>
+              <button @click="showLoginModal = true" class="login-btn-modal">
+                快速登录
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -285,14 +289,21 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  position: relative;
 }
 
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-dropdown {
+  position: relative;
+  cursor: pointer;
 }
 
 .user-name {
@@ -300,7 +311,81 @@ export default {
   font-weight: 500;
 }
 
-.login-btn,
+.user-dropdown:hover .user-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  min-width: 120px;
+  margin-top: 8px;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  color: #374151;
+  text-decoration: none;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background: #f3f4f6;
+}
+
+.menu-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.menu-item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.logout-item {
+  color: #dc2626;
+  border-top: 1px solid #e5e7eb;
+}
+
+.login-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+}
+
+.login-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.login-btn-modal,
 .logout-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -312,7 +397,7 @@ export default {
   font-size: 0.9em;
 }
 
-.login-btn:hover,
+.login-btn-modal:hover,
 .logout-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
