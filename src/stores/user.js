@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
       if (response.access_token) {
         // FastAPI JWT Token格式
         const token = response.access_token;
-        
+
         // 如果后端返回了用户信息就使用，否则需要单独获取
         if (response.user) {
           currentUser.value = response.user;
@@ -46,13 +46,13 @@ export const useUserStore = defineStore('user', () => {
           currentUser.value = {
             username: credentials.username,
           };
-          
+
           // 异步获取完整用户信息，不阻塞登录流程
-          fetchUserInfo().catch(err => {
+          fetchUserInfo().catch((err) => {
             console.warn('Failed to fetch user info after login:', err);
           });
         }
-        
+
         isLoggedIn.value = true;
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(currentUser.value));
@@ -73,18 +73,22 @@ export const useUserStore = defineStore('user', () => {
     } catch (err) {
       // 根据HTTP状态码和错误信息提供更具体的错误提示
       let errorMessage = '登录失败';
-      
+
       if (err.response) {
         const status = err.response.status;
         const responseData = err.response.data;
-        
+
         switch (status) {
           case 401:
-            if (responseData?.detail?.includes('user not found') || 
-                err.message?.includes('user not found')) {
+            if (
+              responseData?.detail?.includes('user not found') ||
+              err.message?.includes('user not found')
+            ) {
               errorMessage = '用户不存在，请检查邮箱地址或先注册账户';
-            } else if (responseData?.detail?.includes('invalid credentials') || 
-                       err.message?.includes('invalid credentials')) {
+            } else if (
+              responseData?.detail?.includes('invalid credentials') ||
+              err.message?.includes('invalid credentials')
+            ) {
               errorMessage = '用户名或密码错误，请重新输入';
             } else {
               errorMessage = '登录凭据无效，请检查用户名和密码';
@@ -102,7 +106,7 @@ export const useUserStore = defineStore('user', () => {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       error.value = errorMessage;
       throw new Error(errorMessage);
     } finally {
@@ -144,7 +148,7 @@ export const useUserStore = defineStore('user', () => {
 
         // 注册后自动获取完整用户信息
         await fetchUserInfo();
-        
+
         return currentUser.value;
       } else if (response.token) {
         // 标准token格式
@@ -159,10 +163,10 @@ export const useUserStore = defineStore('user', () => {
         // 只返回用户信息的情况，直接设置用户状态
         currentUser.value = response;
         isLoggedIn.value = true;
-        
+
         // 保存用户信息，不保存token（需要后续登录）
         localStorage.setItem('user', JSON.stringify(response));
-        
+
         // 提示用户需要登录
         error.value = '注册成功！请使用您的账户信息登录';
         return null;
@@ -173,18 +177,19 @@ export const useUserStore = defineStore('user', () => {
     } catch (err) {
       // 根据HTTP状态码和错误信息提供更具体的错误提示
       let errorMessage = '注册失败';
-      
+
       if (err.response) {
         const status = err.response.status;
         const responseData = err.response.data;
-        
+
         switch (status) {
           case 409:
-            if (responseData?.detail?.includes('email') || 
-                responseData?.detail?.includes('邮箱')) {
+            if (responseData?.detail?.includes('email') || responseData?.detail?.includes('邮箱')) {
               errorMessage = '该邮箱已被注册，请使用其他邮箱或直接登录';
-            } else if (responseData?.detail?.includes('username') || 
-                       responseData?.detail?.includes('用户名')) {
+            } else if (
+              responseData?.detail?.includes('username') ||
+              responseData?.detail?.includes('用户名')
+            ) {
               errorMessage = '该用户名已被使用，请选择其他用户名';
             } else {
               errorMessage = '用户已存在，请使用其他信息注册';
@@ -205,7 +210,7 @@ export const useUserStore = defineStore('user', () => {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       error.value = errorMessage;
       throw new Error(errorMessage);
     } finally {
